@@ -7,7 +7,6 @@ import SignUp from "@/pages/SignUp";
 import Projects from "@/pages/Projects";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { SidebarProvider } from "./contexts/SidebarContext";
-import { AboutProvider } from "./contexts/AboutContext";
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -40,11 +39,9 @@ function App() {
   return (
     <AuthProvider>
       <SidebarProvider>
-        <AboutProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </AboutProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
       </SidebarProvider>
     </AuthProvider>
   );

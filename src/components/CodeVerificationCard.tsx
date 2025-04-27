@@ -45,13 +45,11 @@ type CodeVerificationFormData = z.infer<typeof codeVerificationSchema>;
 
 interface CodeVerificationCardProps {
   email: string;
-  onResendCode: () => void;
   onCodeVerified: () => void;
 }
 
 export function CodeVerificationCard({
   email,
-  onResendCode,
   onCodeVerified,
 }: CodeVerificationCardProps) {
   const navigate = useNavigate();
@@ -80,8 +78,7 @@ export function CodeVerificationCard({
   const handleResendCode = async () => {
     try {
       setIsLoading(true);
-      await authService.resendCode(email);
-      onResendCode();
+      await authService.forgotPassword({ email });
       setCountdown(30);
       setCanResend(false);
     } catch (err) {
@@ -112,6 +109,7 @@ export function CodeVerificationCard({
         code: data.code,
         newPassword: data.newPassword,
       });
+      onCodeVerified();
       navigate("/login");
     } catch (err) {
       if (err instanceof Error) {

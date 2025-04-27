@@ -4,7 +4,7 @@ import { useLoginViewModel } from "@/viewmodels/useLoginViewModel";
 import { LoginFormData, loginSchema } from "@/models/LoginModel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthViewModel } from "@/viewmodels/useAuthViewModel";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { cookieService } from "@/services/cookieService";
 import { Eye, EyeOff } from "lucide-react";
@@ -12,7 +12,7 @@ import { useState } from "react";
 
 export function LoginCard() {
   const { login, isLoading, error } = useLoginViewModel();
-  const { setAuth } = useAuthViewModel();
+  const { setAuth } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 

@@ -67,7 +67,7 @@ export function useHomeViewModel() {
       // Calculate stats
       const projectStats = projectsWithNumbers.reduce<ProjectStats>((acc: ProjectStats, project: Project) => {
         acc.total++
-        const status = project.status.toUpperCase() as ProjectStatus
+        const status = project.status as ProjectStatus
         acc[status] = (acc[status] || 0) + 1
         if (status === ProjectStatus.APPROVED) {
           acc.totalRevenue += project.expectedRevenue

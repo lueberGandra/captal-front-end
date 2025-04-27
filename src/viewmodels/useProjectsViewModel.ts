@@ -2,13 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { Project, ProjectStatus } from '../types/project';
 import { projectService } from '../services/projectService';
 
-interface ApiResponse<T> {
-    statusCode: number;
-    timestamp: string;
-    path: string;
-    data: T;
-}
-
 export function useProjectsViewModel() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -42,10 +35,7 @@ export function useProjectsViewModel() {
         expectedRevenue: number;
     }) => {
         try {
-            const newProject = await projectService.createProject({
-                ...data,
-                status: ProjectStatus.PENDING
-            });
+            const newProject = await projectService.createProject(data);
             setProjects(prev => [...prev, newProject]);
             return newProject;
         } catch (err) {

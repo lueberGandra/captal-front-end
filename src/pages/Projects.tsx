@@ -1,16 +1,7 @@
 import { useState } from "react";
 import { useProjectsViewModel } from "../viewmodels/useProjectsViewModel";
-import {
-  Plus,
-  Search,
-  Filter,
-  MoreVertical,
-  CheckCircle2,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { Plus, Search, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Project, ProjectStatus } from "../types/project";
-import { formatCurrency, formatArea } from "../utils/formatters";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,6 +29,7 @@ function Projects() {
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">(
     "all"
   );
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const {
     register,
@@ -67,14 +59,23 @@ function Projects() {
 
   const onSubmit = async (data: CreateProjectFormData) => {
     try {
-      await createProject({
-        ...data,
+      setCreateError(null);
+      console.log("Form data:", data);
+      const projectData = {
+        name: data.name,
+        location: data.location,
+        landArea: Number(data.landArea),
+        estimatedCost: Number(data.estimatedCost),
+        expectedRevenue: Number(data.expectedRevenue),
         description: data.description || "",
-      });
+      };
+      console.log("Processed data:", projectData);
+      await createProject(projectData);
       setIsCreateModalOpen(false);
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating project:", error);
+      setCreateError(error.response?.data?.message || "Erro ao criar projeto");
     }
   };
 
@@ -286,6 +287,11 @@ function Projects() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-semibold mb-4">Novo Projeto</h2>
+            {createError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                {createError}
+              </div>
+            )}
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div>

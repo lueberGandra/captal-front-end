@@ -1,8 +1,6 @@
 import { api } from '@/lib/axios';
 import {
-    ForgotPasswordRequest,
     ForgotPasswordResponse,
-    VerifyCodeRequest
 } from "@/models/ForgotPasswordModel";
 
 interface ResetPasswordResponse {

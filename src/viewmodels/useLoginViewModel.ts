@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { SignInDto, SignInResponseDto } from "@/models/AuthModel";
 import { authService } from "@/services/authService";
-import { cookieService } from "@/services/cookieService";
 import { AxiosError } from "axios";
 
 interface ApiError {

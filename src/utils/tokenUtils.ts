@@ -4,7 +4,6 @@ interface DecodedIdToken {
     'custom:role': string;
     'custom:userId': string;
     sub: string;
-    // Add other fields as needed
 }
 
 export const decodeToken = (token: string): DecodedIdToken => {

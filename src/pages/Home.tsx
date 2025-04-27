@@ -8,7 +8,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { ProjectStatus } from "../types/project";
-import type { ProjectStats } from "../viewmodels/useHomeViewModel";
 import Layout from "../components/Layout";
 
 function Home() {

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ForgotPasswordCard } from "@/components/ForgotPasswordCard";
 import { CodeVerificationCard } from "@/components/CodeVerificationCard";
 import { ForgotPasswordStep } from "@/models/ForgotPasswordModel";
-import { authService } from "@/services/authService";
 import backgroundJpg from "@/assets/images/background.jpg";
 
 const ForgotPassword = () => {
@@ -14,14 +13,6 @@ const ForgotPassword = () => {
   const handleEmailSubmit = (submittedEmail: string) => {
     setEmail(submittedEmail);
     setCurrentStep(ForgotPasswordStep.CODE_VERIFICATION);
-  };
-
-  const handleResendCode = async () => {
-    try {
-      await authService.sendRecoveryEmail({ email });
-    } catch (error) {
-      console.error("Error resending code:", error);
-    }
   };
 
   const handleCodeVerified = () => {
@@ -36,7 +27,6 @@ const ForgotPassword = () => {
         return (
           <CodeVerificationCard
             email={email}
-            onResendCode={handleResendCode}
             onCodeVerified={handleCodeVerified}
           />
         );
