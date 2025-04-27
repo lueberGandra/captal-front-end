@@ -10,7 +10,6 @@ import { SidebarProvider } from "./contexts/SidebarContext";
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
-
   return (
     <Routes>
       <Route
