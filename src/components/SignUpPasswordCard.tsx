@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { authService } from "@/services/authService";
@@ -56,7 +55,6 @@ export function SignUpPasswordCard({
   formData,
   onBack,
 }: SignUpPasswordCardProps) {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPasswords, setShowPasswords] = useState(false);
@@ -104,7 +102,6 @@ export function SignUpPasswordCard({
     return (
       <SignUpVerificationCard
         email={formData.email}
-        onBack={() => navigate("/login")}
       />
     );
   }

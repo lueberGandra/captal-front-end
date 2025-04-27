@@ -18,12 +18,10 @@ type VerificationFormData = z.infer<typeof verificationSchema>;
 
 interface SignUpVerificationCardProps {
   email: string;
-  onBack: () => void;
 }
 
 export function SignUpVerificationCard({
   email,
-  onBack,
 }: SignUpVerificationCardProps) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
