@@ -1,5 +1,5 @@
 import { useProjectsViewModel } from "../viewmodels/useProjectsViewModel";
-import { Plus, Search, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Plus, Search, XCircle } from "lucide-react";
 import { Project, ProjectStatus } from "../types/project";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";

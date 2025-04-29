@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import React from 'react';
 import { Project, ProjectStatus } from '../types/project';
 import { projectService } from '../services/projectService';
 import { cookieService } from '../services/cookieService';
 import { decodeToken } from '../utils/tokenUtils';
 import { CreateProjectFormData } from '@/models/ProjectModel';
-import { Plus, Search, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock } from 'lucide-react';
 
 export function useProjectsViewModel() {
     const [projects, setProjects] = useState<Project[]>([]);
