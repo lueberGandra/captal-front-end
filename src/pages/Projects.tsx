@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useProjectsViewModel } from "../viewmodels/useProjectsViewModel";
 import { Plus, Search, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Project, ProjectStatus } from "../types/project";
@@ -12,24 +11,28 @@ import {
 
 function Projects() {
   const {
-    projects,
+    filteredProjects,
     isLoading,
     error,
+    userRole,
+    isCreateModalOpen,
+    isDetailsModalOpen,
+    selectedProject,
+    searchTerm,
+    statusFilter,
+    createError,
+    setSearchTerm,
+    setStatusFilter,
+    setIsCreateModalOpen,
+    setIsDetailsModalOpen,
+    setSelectedProject,
     createProject,
     updateProjectStatus,
     formatCurrency,
     formatArea,
     getStatusColor,
+    getStatusIcon,
   } = useProjectsViewModel();
-
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">(
-    "all"
-  );
-  const [createError, setCreateError] = useState<string | null>(null);
 
   const {
     register,
@@ -48,34 +51,12 @@ function Projects() {
     },
   });
 
-  const filteredProjects = projects.filter((project: Project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || project.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
   const onSubmit = async (data: CreateProjectFormData) => {
     try {
-      setCreateError(null);
-      console.log("Form data:", data);
-      const projectData = {
-        name: data.name,
-        location: data.location,
-        landArea: Number(data.landArea),
-        estimatedCost: Number(data.estimatedCost),
-        expectedRevenue: Number(data.expectedRevenue),
-        description: data.description || "",
-      };
-      console.log("Processed data:", projectData);
-      await createProject(projectData);
-      setIsCreateModalOpen(false);
+      await createProject(data);
       reset();
-    } catch (error: any) {
-      console.error("Error creating project:", error);
-      setCreateError(error.response?.data?.message || "Erro ao criar projeto");
+    } catch (error) {
+      // Error is handled by the view model
     }
   };
 
@@ -86,18 +67,8 @@ function Projects() {
     try {
       await updateProjectStatus(projectId, newStatus);
     } catch (error) {
-      console.error("Error updating project status:", error);
+      // Error is handled by the view model
     }
-  };
-
-  const getStatusIcon = (status: ProjectStatus) => {
-    const icons = {
-      [ProjectStatus.PENDING]: Clock,
-      [ProjectStatus.APPROVED]: CheckCircle2,
-      [ProjectStatus.REJECTED]: XCircle,
-    };
-    const Icon = icons[status];
-    return <Icon className={getStatusColor(status)} size={20} />;
   };
 
   if (isLoading) {
@@ -196,9 +167,11 @@ function Projects() {
                 <th className="text-left py-3 px-4 text-gray-600 font-medium">
                   Data
                 </th>
-                <th className="text-left py-3 px-4 text-gray-600 font-medium">
-                  Ações
-                </th>
+                {userRole === "admin" && (
+                  <th className="text-left py-3 px-4 text-gray-600 font-medium">
+                    Ações
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -222,7 +195,15 @@ function Projects() {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      {getStatusIcon(project.status)}
+                      {(() => {
+                        const Icon = getStatusIcon(project.status);
+                        return (
+                          <Icon
+                            className={getStatusColor(project.status)}
+                            size={20}
+                          />
+                        );
+                      })()}
                       <span
                         className={`capitalize ${getStatusColor(
                           project.status
@@ -235,39 +216,41 @@ function Projects() {
                   <td className="py-3 px-4">
                     {new Date(project.createdAt).toLocaleDateString("pt-BR")}
                   </td>
-                  <td
-                    className="py-3 px-4"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="flex items-center gap-2">
-                      {project.status === ProjectStatus.PENDING && (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() =>
-                              handleUpdateStatus(
-                                project.id,
-                                ProjectStatus.APPROVED
-                              )
-                            }
-                            className="px-3 py-1.5 text-sm bg-green-50 text-green-600 hover:bg-green-100 rounded-md transition-colors"
-                          >
-                            Aprovar
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleUpdateStatus(
-                                project.id,
-                                ProjectStatus.REJECTED
-                              )
-                            }
-                            className="px-3 py-1.5 text-sm bg-red-50 text-red-600 hover:bg-red-100 rounded-md transition-colors"
-                          >
-                            Rejeitar
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+                  {userRole === "admin" && (
+                    <td
+                      className="py-3 px-4"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center gap-2">
+                        {project.status === ProjectStatus.PENDING && (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() =>
+                                handleUpdateStatus(
+                                  project.id,
+                                  ProjectStatus.APPROVED
+                                )
+                              }
+                              className="px-3 py-1.5 text-sm bg-green-50 text-green-600 hover:bg-green-100 rounded-md transition-colors"
+                            >
+                              Aprovar
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleUpdateStatus(
+                                  project.id,
+                                  ProjectStatus.REJECTED
+                                )
+                              }
+                              className="px-3 py-1.5 text-sm bg-red-50 text-red-600 hover:bg-red-100 rounded-md transition-colors"
+                            >
+                              Rejeitar
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
               {filteredProjects.length === 0 && (
@@ -454,7 +437,15 @@ function Projects() {
               <div>
                 <h3 className="text-sm font-medium text-gray-500">Status</h3>
                 <div className="mt-1 flex items-center gap-2">
-                  {getStatusIcon(selectedProject.status)}
+                  {(() => {
+                    const Icon = getStatusIcon(selectedProject.status);
+                    return (
+                      <Icon
+                        className={getStatusColor(selectedProject.status)}
+                        size={20}
+                      />
+                    );
+                  })()}
                   <span
                     className={`capitalize ${getStatusColor(
                       selectedProject.status

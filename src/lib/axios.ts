@@ -42,7 +42,7 @@ api.interceptors.request.use(async (config) => {
                     RefreshToken: response.refreshToken,
                     IdToken: response.idToken,
                     TokenType: "Bearer",
-                    ExpiresIn: 3600, // 1 hour in seconds
+                    ExpiresIn: response.expiresIn // 1 hour in seconds
                 });
 
                 config.headers.Authorization = `Bearer ${response.accessToken}`;
